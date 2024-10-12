@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+current_script_path=${BASH_SOURCE[0]}
+plugin_dir=$(dirname "$(dirname "$current_script_path")")
+
+# shellcheck source=./lib/utils.bash
+source "${plugin_dir}/lib/utils.bash"
+
+url=$(get_sdkmanager_url)
+
+echo "fetching $url"
+
+mytmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
+if [[ ! "$mytmpdir" || ! -d "$mytmpdir" ]]; then
+    fail "Could not create temp dir"
+fi
+
+function cleanup {
+    rm -rf "$mytmpdir"
+}
+
+curl -L "$url" -o ${mytmpdir}/source.zip
+if [ $? -ne 0 ]; then
+    cleanup
+    fail "Could not download ${url}"
+fi
+
+# TODO check sha256sum
+
+unzip ${mytmpdir}/source.zip -d ${mytmpdir}/
+if [ $? -ne 0 ]; then
+    cleanup
+    fail "Could not unzip ${url}"
+fi
+
+# rm -rf ${plugin_dir}/lib/cmdline-tools
+
+mv ${mytmpdir}/cmdline-tools ${plugin_dir}/lib/
+
+cli --licenses
+if [ $? -ne 0 ]; then
+    fail "Could not accept licenses"
+fi
+
+cleanup

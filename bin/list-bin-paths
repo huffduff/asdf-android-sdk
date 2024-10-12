@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "cmdline-tools/${ASDF_INSTALL_VERSION}/bin"
+echo "build-tools/*"
+echo "platform-tools"
+echo "emulator"
+echo "ndk-bundle"
