@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-echo "cmdline-tools/${ASDF_INSTALL_VERSION}/bin"
-echo "build-tools/*"
-echo "platform-tools"
-echo "emulator"
-echo "ndk-bundle"
+BUILD_TOOLS=`ls ${ASDF_INSTALL_PATH}/build-tools | sort -n | tail -1`
+
+echo "cmdline-tools/${ASDF_INSTALL_VERSION}/bin build-tools/${BUILD_TOOLS} platform-tools emulator ndk-bundle"
